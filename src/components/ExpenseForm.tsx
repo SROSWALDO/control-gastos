@@ -17,13 +17,15 @@ export default function ExpenseForm() {
   });
 
   const [error, setError] = useState('')
+  const [previousAmount, setPreviousAmount] = useState(0)
 
-  const { dispatch, state, totalExpenses, disponible } = useBudget()
+  const { dispatch, state, disponible } = useBudget()
 
   useEffect(() => {
     if(state.editingId) {
       const editingExpense = state.expenses.filter(currentExpense => currentExpense.id === state.editingId)[0]
       setExpense(editingExpense)
+      setPreviousAmount(editingExpense.amount)
     }
 
   },[state.editingId])
@@ -56,7 +58,7 @@ export default function ExpenseForm() {
     }
 
     //! validar que no me pase
-    if(expense.amount > disponible) {
+    if(expense.amount - previousAmount > disponible) {
       setError('Ese gasto se sale del presupuesto')
       return
     }
@@ -76,6 +78,7 @@ export default function ExpenseForm() {
       category: '',
       date: new Date()
     })
+    setPreviousAmount(0)
 
   }
 
